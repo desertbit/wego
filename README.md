@@ -1,10 +1,10 @@
 # Wego
-A go client for the [Wekan REST API](https://wekan.github.io/api/v5.13/#wekan-rest-api)  
+A go client for the [Wekan REST API](https://wekan.github.io/api/v6.97/#wekan-rest-api)  
 
 ## Features
 - Automatic login and token renewal
 - 100% of the official API implemented
-- Implements Wekan REST API v5.13
+- Implements Wekan REST API v6.97
 
 ## Sample
 ```go
