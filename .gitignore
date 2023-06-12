@@ -1,0 +1,9 @@
+# Ignore hidden files and lock files.
+.*
+~*
+
+# Exemptions.
+!.gitignore
+
+# Ignore unfinished example for now.
+example/main.go
