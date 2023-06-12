@@ -15,7 +15,7 @@ import (
 
 // GetPublicBoards performs a get_public_boards request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_public_boards
-func (c *Client) GetPublicBoards(ctx context.Context) (boards []Board, err error) {
+func (c *Client) GetPublicBoards(ctx context.Context) (boards []GetPublicBoard, err error) {
 	const endpoint = "/api/boards"
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -53,7 +53,7 @@ func (c *Client) NewBoard(ctx context.Context, request NewBoardRequest) (r NewBo
 
 // GetBoard performs a get_board request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_board
-func (c *Client) GetBoard(ctx context.Context, boardID string) (r BoardDetail, err error) {
+func (c *Client) GetBoard(ctx context.Context, boardID string) (r GetBoard, err error) {
 	var endpoint = "/api/boards/" + boardID
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -153,12 +153,7 @@ func (c *Client) SetBoardMemberPermission(ctx context.Context, boardID, memberID
 		return
 	}
 
-	err = c.doSimpleRequest(req, nil)
-	if err != nil {
-		return
-	}
-
-	return
+	return c.doSimpleRequest(req, nil)
 }
 
 // GetBoardsCount performs a get_boards_count request against the Wekan server.
@@ -181,7 +176,7 @@ func (c *Client) GetBoardsCount(ctx context.Context) (r GetBoardsCountResponse, 
 
 // GetBoardsFromUser performs a get_boards_from_user request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_boards_from_user
-func (c *Client) GetBoardsFromUser(ctx context.Context, userID string) (r []Board, err error) {
+func (c *Client) GetBoardsFromUser(ctx context.Context, userID string) (r []GetBoardFromUser, err error) {
 	var endpoint = "/api/users/" + userID + "/boards"
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -201,12 +196,17 @@ func (c *Client) GetBoardsFromUser(ctx context.Context, userID string) (r []Boar
 //### Types ###//
 //#############//
 
-type Board struct {
+type GetPublicBoard struct {
 	ID    string `json:"_id"`
 	Title string `json:"title"`
 }
 
-type BoardDetail struct {
+type GetBoardFromUser struct {
+	ID    string `json:"_id"`
+	Title string `json:"title"`
+}
+
+type GetBoard struct {
 	Title                      string        `json:"title"`
 	Slug                       string        `json:"slug"`
 	Archived                   bool          `json:"archived"`

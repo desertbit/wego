@@ -11,7 +11,7 @@ import "context"
 
 // GetAllSwimlanes performs a get_all_swimlanes request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_swimlanes
-func (c *Client) GetAllSwimlanes(ctx context.Context, boardID string) (swimlanes []Swimlane, err error) {
+func (c *Client) GetAllSwimlanes(ctx context.Context, boardID string) (swimlanes []GetAllSwimlane, err error) {
 	var endpoint = "/api/boards/" + boardID + "/swimlanes"
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -47,7 +47,7 @@ func (c *Client) NewSwimlane(ctx context.Context, boardID, title string) (r NewS
 
 // GetSwimlane performs a get_swimlane request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_swimlane
-func (c *Client) GetSwimlane(ctx context.Context, boardID, swimlaneID string) (swimlane SwimlaneDetail, err error) {
+func (c *Client) GetSwimlane(ctx context.Context, boardID, swimlaneID string) (swimlane GetSwimlane, err error) {
 	var endpoint = "/api/boards/" + boardID + "/swimlanes/" + swimlaneID
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -80,7 +80,7 @@ func (c *Client) DeleteSwimlane(ctx context.Context, boardID, swimlaneID string)
 //### Types ###//
 //#############//
 
-type Swimlane struct {
+type GetAllSwimlane struct {
 	ID    string `json:"_id"`
 	Title string `json:"title"`
 }
@@ -93,7 +93,7 @@ type NewSwimlaneResponse struct {
 	ID string `json:"_id"`
 }
 
-type SwimlaneDetail struct {
+type GetSwimlane struct {
 	Title      string `json:"title"`
 	Archived   bool   `json:"archived"`
 	ArchivedAt string `json:"archivedAt"`

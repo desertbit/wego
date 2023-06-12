@@ -11,8 +11,8 @@ import "context"
 
 // GetAllLists performs a get_all_lists request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_lists
-func (c *Client) GetAllLists(ctx context.Context, boardID string) (lists []List, err error) {
-	var endpoint = "/api/boards/" + boardID + "/lists"
+func (c *Client) GetAllLists(ctx context.Context, boardID string) (lists []GetAllList, err error) {
+	endpoint := c.endpoint("boards", boardID, "lists")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -30,7 +30,7 @@ func (c *Client) GetAllLists(ctx context.Context, boardID string) (lists []List,
 // NewList performs a new_list request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#new_list
 func (c *Client) NewList(ctx context.Context, boardID, title string) (r NewListResponse, err error) {
-	var endpoint = "/api/boards/" + boardID + "/lists"
+	endpoint := c.endpoint("boards", boardID, "lists")
 
 	req, err := c.newAuthenticatedPOSTRequest(ctx, endpoint, newListRequest{Title: title})
 	if err != nil {
@@ -47,8 +47,8 @@ func (c *Client) NewList(ctx context.Context, boardID, title string) (r NewListR
 
 // GetList performs a get_list request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_list
-func (c *Client) GetList(ctx context.Context, boardID, listID string) (list ListDetail, err error) {
-	var endpoint = "/api/boards/" + boardID + "/lists/" + listID
+func (c *Client) GetList(ctx context.Context, boardID, listID string) (list GetList, err error) {
+	endpoint := c.endpoint("boards", boardID, "lists", listID)
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -66,7 +66,7 @@ func (c *Client) GetList(ctx context.Context, boardID, listID string) (list List
 // DeleteList performs a delete_list request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#delete_list
 func (c *Client) DeleteList(ctx context.Context, boardID, listID string) (err error) {
-	var endpoint = "/api/boards/" + boardID + "/lists/" + listID
+	endpoint := c.endpoint("boards", boardID, "lists", listID)
 
 	req, err := c.newAuthenticatedDELETERequest(ctx, endpoint)
 	if err != nil {
@@ -80,7 +80,7 @@ func (c *Client) DeleteList(ctx context.Context, boardID, listID string) (err er
 //### Types ###//
 //#############//
 
-type List struct {
+type GetAllList struct {
 	ID    string `json:"_id"`
 	Title string `json:"title"`
 }
@@ -93,7 +93,7 @@ type NewListResponse struct {
 	ID string `json:"_id"`
 }
 
-type ListDetail struct {
+type GetList struct {
 	Title      string       `json:"title"`
 	Starred    bool         `json:"starred"`
 	Archived   bool         `json:"archived"`

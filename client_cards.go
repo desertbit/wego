@@ -15,7 +15,7 @@ import (
 
 // GetCardsByCustomField performs a get_cards_by_custom_field request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_cards_by_custom_field
-func (c *Client) GetCardsByCustomField(ctx context.Context, boardID, customField, customFieldValue string) (cards []CardExtended, err error) {
+func (c *Client) GetCardsByCustomField(ctx context.Context, boardID, customField, customFieldValue string) (cards []GetCardByCustomField, err error) {
 	var endpoint = c.endpoint("boards", boardID, "cardsByCustomField", customField, customFieldValue)
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -33,7 +33,7 @@ func (c *Client) GetCardsByCustomField(ctx context.Context, boardID, customField
 
 // GetAllCards performs a get_all_cards request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_cards
-func (c *Client) GetAllCards(ctx context.Context, boardID, listID string) (cards []Card, err error) {
+func (c *Client) GetAllCards(ctx context.Context, boardID, listID string) (cards []GetAllCard, err error) {
 	var endpoint = c.endpoint("boards", boardID, "lists", listID, "cards")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -69,7 +69,7 @@ func (c *Client) NewCard(ctx context.Context, boardID, listID string, request Ne
 
 // GetCard performs a get_card request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_card
-func (c *Client) GetCard(ctx context.Context, boardID, listID, cardID string) (card CardDetail, err error) {
+func (c *Client) GetCard(ctx context.Context, boardID, listID, cardID string) (card GetCard, err error) {
 	var endpoint = c.endpoint("boards", boardID, "lists", listID, "cards", cardID)
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -116,21 +116,47 @@ func (c *Client) DeleteCard(ctx context.Context, boardID, cardID string) (err er
 	return c.doSimpleRequest(req, nil)
 }
 
+// GetSwimlaneCards performs a get_swimlane_cards request against the Wekan server.
+// See https://wekan.github.io/api/v5.13/#get_swimlane_cards
+func (c *Client) GetSwimlaneCards(ctx context.Context, boardID, swimlaneID string) (cards []GetSwimlaneCard, err error) {
+	var endpoint = c.endpoint("boards", boardID, "swimlanes", swimlaneID, "cards")
+
+	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
+	if err != nil {
+		return
+	}
+
+	err = c.doSimpleRequest(req, &cards)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 //#############//
 //### Types ###//
 //#############//
 
-type Card struct {
+type GetAllCard struct {
 	ID          string `json:"_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-type CardExtended struct {
-	Card `json:",inline"`
+type GetCardByCustomField struct {
+	ID          string `json:"_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	ListID      string `json:"listId"`
+	SwimlaneID  string `json:"swimlaneId"`
+}
 
-	ListID     string `json:"listId"`
-	SwimlaneID string `json:"swimlaneId"`
+type GetSwimlaneCard struct {
+	ID          string `json:"_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	ListID      string `json:"listId"`
 }
 
 type NewCardRequest struct {
@@ -153,7 +179,7 @@ type NewCardResponse struct {
 	ID string `json:"_id"`
 }
 
-type CardDetail struct {
+type GetCard struct {
 	Title            string          `json:"title"`
 	Archived         bool            `json:"archived"`
 	ArchivedAt       string          `json:"archivedAt"`

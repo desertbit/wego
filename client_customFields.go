@@ -11,7 +11,7 @@ import "context"
 
 // GetAllCustomFields performs a get_all_custom_fields request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_custom_fields
-func (c *Client) GetAllCustomFields(ctx context.Context, boardID string) (fields []CustomField, err error) {
+func (c *Client) GetAllCustomFields(ctx context.Context, boardID string) (fields []GetAllCustomField, err error) {
 	endpoint := c.endpoint("boards", boardID, "custom-fields")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -47,7 +47,7 @@ func (c *Client) NewCustomField(ctx context.Context, boardID string, data NewCus
 
 // GetCustomField performs a get_custom_field request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_custom_fields
-func (c *Client) GetCustomField(ctx context.Context, boardID string) (resp []GetCustomFieldResponse, err error) {
+func (c *Client) GetCustomField(ctx context.Context, boardID string) (resp []GetCustomField, err error) {
 	endpoint := c.endpoint("boards", boardID, "custom-fields")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
@@ -106,12 +106,7 @@ func (c *Client) AddCustomFieldDropdownItems(ctx context.Context, boardID, custo
 		return
 	}
 
-	err = c.doSimpleRequest(req, nil)
-	if err != nil {
-		return
-	}
-
-	return
+	return c.doSimpleRequest(req, nil)
 }
 
 // EditCustomFieldDropdownItems performs a edit_custom_field_dropdown_items request against the Wekan server.
@@ -126,12 +121,7 @@ func (c *Client) EditCustomFieldDropdownItems(ctx context.Context, boardID, cust
 		return
 	}
 
-	err = c.doSimpleRequest(req, nil)
-	if err != nil {
-		return
-	}
-
-	return
+	return c.doSimpleRequest(req, nil)
 }
 
 // DeleteCustomFieldDropdownItem performs a delete_custom_field request against the Wekan server.
@@ -151,7 +141,7 @@ func (c *Client) DeleteCustomFieldDropdownItem(ctx context.Context, boardID, cus
 //### Types ###//
 //#############//
 
-type CustomField struct {
+type GetAllCustomField struct {
 	ID   string `json:"_id"`
 	Name string `json:"name"`
 	Type string `json:"type"`
@@ -171,7 +161,7 @@ type NewCustomFieldResponse struct {
 	ID string `json:"_id"`
 }
 
-type GetCustomFieldResponse struct {
+type GetCustomField struct {
 	ID       string `json:"_id"`
 	BoardIDs string `json:"boardIds"`
 }
