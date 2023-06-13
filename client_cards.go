@@ -256,28 +256,28 @@ type Poker struct {
 }
 
 type EditCardOptions struct {
-	Title        string     `json:"title,omitempty"`
-	Sort         string     `json:"sort,omitempty"`
-	ParentID     string     `json:"parentId,omitempty"`
-	Description  string     `json:"description,omitempty"`
-	Color        string     `json:"color,omitempty"`
-	Vote         *Vote      `json:"vote,omitempty"`
-	Poker        *Poker     `json:"poker,omitempty"`
-	LabelIDs     []string   `json:"labelIds,omitempty"`
-	RequestedBy  string     `json:"requestedBy,omitempty"`
-	AssignedBy   string     `json:"assignedBy,omitempty"`
-	ReceivedAt   *time.Time `json:"receivedAt,omitempty"`
-	StartAt      *time.Time `json:"startAt,omitempty"`
-	DueAt        *time.Time `json:"dueAt,omitempty"`
-	EndAt        *time.Time `json:"endAt,omitempty"`
-	SpentTime    string     `json:"spentTime,omitempty"`
-	IsOverTime   bool       `json:"isOverTime,omitempty"`
-	CustomFields string     `json:"customFields,omitempty"`
-	Members      []string   `json:"members,omitempty"`
-	Assignees    []string   `json:"assignees,omitempty"`
-	SwimlaneID   string     `json:"swimlaneId,omitempty"`
-	ListID       string     `json:"listId,omitempty"`
-	AuthorID     string     `json:"authorId,omitempty"`
+	Title        string            `json:"title,omitempty"`
+	Sort         string            `json:"sort,omitempty"`
+	ParentID     string            `json:"parentId,omitempty"`
+	Description  string            `json:"description,omitempty"`
+	Color        string            `json:"color,omitempty"`
+	Vote         *Vote             `json:"vote,omitempty"`
+	Poker        *Poker            `json:"poker,omitempty"`
+	LabelIDs     []string          `json:"labelIds,omitempty"`
+	RequestedBy  string            `json:"requestedBy,omitempty"`
+	AssignedBy   string            `json:"assignedBy,omitempty"`
+	ReceivedAt   *time.Time        `json:"receivedAt,omitempty"`
+	StartAt      *time.Time        `json:"startAt,omitempty"`
+	DueAt        *time.Time        `json:"dueAt,omitempty"`
+	EndAt        *time.Time        `json:"endAt,omitempty"`
+	SpentTime    string            `json:"spentTime,omitempty"`
+	IsOverTime   bool              `json:"isOverTime,omitempty"`
+	CustomFields []CardCustomField `json:"customFields,omitempty"`
+	Members      []string          `json:"members,omitempty"`
+	Assignees    []string          `json:"assignees,omitempty"`
+	SwimlaneID   string            `json:"swimlaneId,omitempty"`
+	ListID       string            `json:"listId,omitempty"`
+	AuthorID     string            `json:"authorId,omitempty"`
 }
 
 type EditCardResponse struct {
