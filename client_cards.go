@@ -9,6 +9,8 @@ package wego
 
 import (
 	"context"
+	"errors"
+	"io"
 	"time"
 )
 
@@ -68,6 +70,8 @@ func (c *Client) NewCard(ctx context.Context, boardID, listID string, request Ne
 
 // GetCard performs a get_card request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_card
+//
+// Returns ErrNotFound, if the card could not be found.
 func (c *Client) GetCard(ctx context.Context, boardID, listID, cardID string) (card GetCard, err error) {
 	var endpoint = c.endpoint("boards", boardID, "lists", listID, "cards", cardID)
 
@@ -78,6 +82,9 @@ func (c *Client) GetCard(ctx context.Context, boardID, listID, cardID string) (c
 
 	err = c.doSimpleRequest(req, &card)
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			err = ErrNotFound
+		}
 		return
 	}
 
@@ -94,7 +101,7 @@ func (c *Client) EditCard(ctx context.Context, boardID, listID, cardID string, o
 		return
 	}
 
-	err = c.doSimpleRequest(req, nil)
+	err = c.doSimpleRequest(req, &r)
 	if err != nil {
 		return
 	}
@@ -170,8 +177,8 @@ type NewCardRequest struct {
 }
 
 type NewCardOptions struct {
-	MemberIDs []string `json:"members"`
-	Assignees []string `json:"assignees"`
+	MemberIDs []string `json:"members,omitempty"`
+	Assignees []string `json:"assignees,omitempty"`
 }
 
 type NewCardResponse struct {
@@ -223,54 +230,54 @@ type CardCustomField struct {
 }
 
 type Vote struct {
-	Question             string   `json:"question"`
-	Positive             []string `json:"positive"`
-	Negative             []string `json:"negative"`
-	End                  string   `json:"end"`
-	Public               bool     `json:"public"`
-	AllowNonBoardMembers bool     `json:"allowNonBoardMembers"`
+	Question             string   `json:"question,omitempty"`
+	Positive             []string `json:"positive,omitempty"`
+	Negative             []string `json:"negative,omitempty"`
+	End                  string   `json:"end,omitempty"`
+	Public               bool     `json:"public,omitempty"`
+	AllowNonBoardMembers bool     `json:"allowNonBoardMembers,omitempty"`
 }
 
 type Poker struct {
-	Question             bool     `json:"question"`
-	One                  []string `json:"one"`
-	Two                  []string `json:"two"`
-	Three                []string `json:"three"`
-	Five                 []string `json:"five"`
-	Eight                []string `json:"eight"`
-	Thirteen             []string `json:"thirteen"`
-	Twenty               []string `json:"twenty"`
-	Forty                []string `json:"forty"`
-	OneHundred           []string `json:"oneHundred"`
-	Unsure               []string `json:"unsure"`
-	End                  string   `json:"end"`
-	AllowNonBoardMembers bool     `json:"allowNonBoardMembers"`
-	Estimation           int      `json:"estimation"`
+	Question             bool     `json:"question,omitempty"`
+	One                  []string `json:"one,omitempty"`
+	Two                  []string `json:"two,omitempty"`
+	Three                []string `json:"three,omitempty"`
+	Five                 []string `json:"five,omitempty"`
+	Eight                []string `json:"eight,omitempty"`
+	Thirteen             []string `json:"thirteen,omitempty"`
+	Twenty               []string `json:"twenty,omitempty"`
+	Forty                []string `json:"forty,omitempty"`
+	OneHundred           []string `json:"oneHundred,omitempty"`
+	Unsure               []string `json:"unsure,omitempty"`
+	End                  string   `json:"end,omitempty"`
+	AllowNonBoardMembers bool     `json:"allowNonBoardMembers,omitempty"`
+	Estimation           int      `json:"estimation,omitempty"`
 }
 
 type EditCardOptions struct {
-	Title        string    `json:"title"`
-	Sort         string    `json:"sort"`
-	ParentID     string    `json:"parentId"`
-	Description  string    `json:"description"`
-	Color        string    `json:"color"`
-	Vote         Vote      `json:"vote"`
-	Poker        Poker     `json:"poker"`
-	LabelIDs     []string  `json:"labelIds"`
-	RequestedBy  string    `json:"requestedBy"`
-	AssignedBy   string    `json:"assignedBy"`
-	ReceivedAt   time.Time `json:"receivedAt"`
-	StartAt      time.Time `json:"startAt"`
-	DueAt        time.Time `json:"dueAt"`
-	EndAt        time.Time `json:"endAt"`
-	SpentTime    string    `json:"spentTime"`
-	IsOverTime   bool      `json:"isOverTime"`
-	CustomFields string    `json:"customFields"`
-	Members      []string  `json:"members"`
-	Assignees    []string  `json:"assignees"`
-	SwimlaneID   string    `json:"swimlaneId"`
-	ListID       string    `json:"listId"`
-	AuthorID     string    `json:"authorId"`
+	Title        string     `json:"title,omitempty"`
+	Sort         string     `json:"sort,omitempty"`
+	ParentID     string     `json:"parentId,omitempty"`
+	Description  string     `json:"description,omitempty"`
+	Color        string     `json:"color,omitempty"`
+	Vote         *Vote      `json:"vote,omitempty"`
+	Poker        *Poker     `json:"poker,omitempty"`
+	LabelIDs     []string   `json:"labelIds,omitempty"`
+	RequestedBy  string     `json:"requestedBy,omitempty"`
+	AssignedBy   string     `json:"assignedBy,omitempty"`
+	ReceivedAt   *time.Time `json:"receivedAt,omitempty"`
+	StartAt      *time.Time `json:"startAt,omitempty"`
+	DueAt        *time.Time `json:"dueAt,omitempty"`
+	EndAt        *time.Time `json:"endAt,omitempty"`
+	SpentTime    string     `json:"spentTime,omitempty"`
+	IsOverTime   bool       `json:"isOverTime,omitempty"`
+	CustomFields string     `json:"customFields,omitempty"`
+	Members      []string   `json:"members,omitempty"`
+	Assignees    []string   `json:"assignees,omitempty"`
+	SwimlaneID   string     `json:"swimlaneId,omitempty"`
+	ListID       string     `json:"listId,omitempty"`
+	AuthorID     string     `json:"authorId,omitempty"`
 }
 
 type EditCardResponse struct {

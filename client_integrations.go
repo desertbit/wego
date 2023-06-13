@@ -7,7 +7,11 @@
 
 package wego
 
-import "context"
+import (
+	"context"
+	"errors"
+	"io"
+)
 
 // GetAllIntegrations performs a get_all_integrations request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_integrations
@@ -47,6 +51,8 @@ func (c *Client) NewIntegration(ctx context.Context, boardID, url string) (r New
 
 // GetIntegration performs a get_integration request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_integration
+//
+// Returns ErrNotFound, if the integration could not be found.
 func (c *Client) GetIntegration(ctx context.Context, boardID, integrationID string) (integration Integration, err error) {
 	endpoint := c.endpoint("boards", boardID, "integrations", integrationID)
 
@@ -57,6 +63,9 @@ func (c *Client) GetIntegration(ctx context.Context, boardID, integrationID stri
 
 	err = c.doSimpleRequest(req, &integration)
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			err = ErrNotFound
+		}
 		return
 	}
 

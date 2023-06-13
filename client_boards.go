@@ -10,13 +10,15 @@ package wego
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"io"
 	"time"
 )
 
 // GetPublicBoards performs a get_public_boards request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_public_boards
 func (c *Client) GetPublicBoards(ctx context.Context) (boards []GetPublicBoard, err error) {
-	const endpoint = "/api/boards"
+	endpoint := c.endpoint("boards")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -36,7 +38,7 @@ func (c *Client) GetPublicBoards(ctx context.Context) (boards []GetPublicBoard, 
 //
 // Note: Owner must be a userID, not an email or username.
 func (c *Client) NewBoard(ctx context.Context, request NewBoardRequest) (r NewBoardResponse, err error) {
-	const endpoint = "/api/boards"
+	endpoint := c.endpoint("boards")
 
 	req, err := c.newAuthenticatedPOSTRequest(ctx, endpoint, request)
 	if err != nil {
@@ -53,8 +55,10 @@ func (c *Client) NewBoard(ctx context.Context, request NewBoardRequest) (r NewBo
 
 // GetBoard performs a get_board request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_board
+//
+// Returns ErrNotFound, if the board could not be found.
 func (c *Client) GetBoard(ctx context.Context, boardID string) (r GetBoard, err error) {
-	var endpoint = "/api/boards/" + boardID
+	endpoint := c.endpoint("boards", boardID)
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -63,6 +67,9 @@ func (c *Client) GetBoard(ctx context.Context, boardID string) (r GetBoard, err 
 
 	err = c.doSimpleRequest(req, &r)
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			err = ErrNotFound
+		}
 		return
 	}
 
@@ -72,7 +79,7 @@ func (c *Client) GetBoard(ctx context.Context, boardID string) (r GetBoard, err 
 // DeleteBoard performs a delete_board request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#delete_board
 func (c *Client) DeleteBoard(ctx context.Context, boardID string) (err error) {
-	var endpoint = "/api/boards/" + boardID
+	endpoint := c.endpoint("boards", boardID)
 
 	req, err := c.newAuthenticatedDELETERequest(ctx, endpoint)
 	if err != nil {
@@ -85,7 +92,7 @@ func (c *Client) DeleteBoard(ctx context.Context, boardID string) (err error) {
 // GetBoardAttachments performs a get_board_attachments request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_board_attachments
 func (c *Client) GetBoardAttachments(ctx context.Context, boardID string) (attachments []BoardAttachment, err error) {
-	var endpoint = "/api/boards/" + boardID + "/attachments"
+	endpoint := c.endpoint("boards", boardID, "attachments")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -108,7 +115,7 @@ func (c *Client) ExportJSON(ctx context.Context, boardID string) (boardJSON json
 		return
 	}
 
-	var endpoint = "/api/boards/" + boardID + "/export?authToken=" + token
+	endpoint := c.endpoint("boards", boardID, "export?authToken="+token)
 
 	req, err := c.newGETRequest(ctx, endpoint)
 	if err != nil {
@@ -128,7 +135,7 @@ func (c *Client) ExportJSON(ctx context.Context, boardID string) (boardJSON json
 //
 // Note: Currently broken
 func (c *Client) AddBoardLabel(ctx context.Context, boardID, name, color string) (err error) {
-	var endpoint = "/api/boards/" + boardID + "/labels"
+	endpoint := c.endpoint("boards", boardID, "labels")
 
 	req, err := c.newAuthenticatedPUTRequest(ctx, endpoint, addBoardLabelRequest{
 		Label: addBoardLabelRequestLabel{
@@ -146,7 +153,7 @@ func (c *Client) AddBoardLabel(ctx context.Context, boardID, name, color string)
 // SetBoardMemberPermission performs an set_board_member_permission request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#set_board_member_permission
 func (c *Client) SetBoardMemberPermission(ctx context.Context, boardID, memberID string, opts SetBoardMemberPermissionOptions) (err error) {
-	var endpoint = "/api/boards/" + boardID + "/members/" + memberID
+	endpoint := c.endpoint("boards", boardID, "members", memberID)
 
 	req, err := c.newAuthenticatedPOSTRequest(ctx, endpoint, opts)
 	if err != nil {
@@ -159,7 +166,7 @@ func (c *Client) SetBoardMemberPermission(ctx context.Context, boardID, memberID
 // GetBoardsCount performs a get_boards_count request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_boards_count
 func (c *Client) GetBoardsCount(ctx context.Context) (r GetBoardsCountResponse, err error) {
-	const endpoint = "/api/boards_count"
+	endpoint := c.endpoint("boards_count")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -177,7 +184,7 @@ func (c *Client) GetBoardsCount(ctx context.Context) (r GetBoardsCountResponse, 
 // GetBoardsFromUser performs a get_boards_from_user request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_boards_from_user
 func (c *Client) GetBoardsFromUser(ctx context.Context, userID string) (r []GetBoardFromUser, err error) {
-	var endpoint = "/api/users/" + userID + "/boards"
+	endpoint := c.endpoint("users", userID)
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {

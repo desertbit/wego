@@ -7,7 +7,11 @@
 
 package wego
 
-import "context"
+import (
+	"context"
+	"errors"
+	"io"
+)
 
 // GetAllLists performs a get_all_lists request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_lists
@@ -47,6 +51,8 @@ func (c *Client) NewList(ctx context.Context, boardID, title string) (r NewListR
 
 // GetList performs a get_list request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_list
+//
+// Returns ErrNotFound, if the list could not be found.
 func (c *Client) GetList(ctx context.Context, boardID, listID string) (list GetList, err error) {
 	endpoint := c.endpoint("boards", boardID, "lists", listID)
 
@@ -57,6 +63,9 @@ func (c *Client) GetList(ctx context.Context, boardID, listID string) (list GetL
 
 	err = c.doSimpleRequest(req, &list)
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			err = ErrNotFound
+		}
 		return
 	}
 

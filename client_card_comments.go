@@ -7,7 +7,11 @@
 
 package wego
 
-import "context"
+import (
+	"context"
+	"errors"
+	"io"
+)
 
 // GetAllComments performs a get_all_comments request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_comments
@@ -47,6 +51,8 @@ func (c *Client) NewComment(ctx context.Context, boardID, cardID string, data Ne
 
 // GetComment performs a get_comment request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_comment
+//
+// Returns ErrNotFound, if the comment could not be found.
 func (c *Client) GetComment(ctx context.Context, boardID, cardID, commentID string) (comment GetComment, err error) {
 	endpoint := c.endpoint("boards", boardID, "cards", cardID, "comments", commentID)
 
@@ -57,6 +63,9 @@ func (c *Client) GetComment(ctx context.Context, boardID, cardID, commentID stri
 
 	err = c.doSimpleRequest(req, &comment)
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			err = ErrNotFound
+		}
 		return
 	}
 

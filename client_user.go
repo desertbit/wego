@@ -121,6 +121,8 @@ func (c *Client) NewUser(ctx context.Context, data NewUserRequest) (r NewUserRes
 
 // GetUser performs a get_user request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_user
+//
+// Returns ErrNotFound, if the user could not be found.
 func (c *Client) GetUser(ctx context.Context, userID string) (user User, err error) {
 	endpoint := c.endpoint("users", userID)
 
@@ -131,6 +133,9 @@ func (c *Client) GetUser(ctx context.Context, userID string) (user User, err err
 
 	err = c.doSimpleRequest(req, &user)
 	if err != nil {
+		return
+	} else if user.Username == "" {
+		err = ErrNotFound
 		return
 	}
 

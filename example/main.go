@@ -30,24 +30,38 @@ func main() {
 	const boardID = "GXCary4RDoJqR8n3u"
 	listIDs := []string{"8EXETWQ9YBThk7vjt", "kkhTPJDcLsSZ9hRYs"}
 	_ = listIDs
-	/*lists, err := c.GetAllLists(context.Background(), boardID)
+	lists, err := c.GetAllLists(context.Background(), boardID)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("lists: %+v\n", lists)*/
+	fmt.Printf("lists: %+v\n", lists)
+
+	u, err := c.GetComment(context.TODO(), boardID, "fN556xuzJFSEDCrn48k", "tinaer")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("user: %+v\n", u)
 
 	/*for _, listID := range listIDs {
 		cards, err := c.GetAllCards(context.Background(), boardID, listID)
 		if err != nil {
-			return
+			log.Fatal(err)
 		}
 
 		fmt.Printf("cards: %+v\n", cards)
 	}*/
 
-	card, err := c.GetCard(context.Background(), boardID, listIDs[1], "fN556xuzJFSEDC48k")
+	/*card, err := c.GetCard(context.Background(), boardID, listIDs[1], "fN556xuzJFSEDC48k")
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
-	fmt.Printf("card: %+v\n", card)
+	fmt.Printf("card: %+v\n", card)*/
+
+	r, err := c.EditCard(context.Background(), boardID, listIDs[1], "fN556xuzJFSEDC48k", wego.EditCardOptions{
+		ListID: listIDs[0],
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("response: %+v\n", r)
 }

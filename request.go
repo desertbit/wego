@@ -112,16 +112,19 @@ func (c *Client) doSimpleRequest(req *http.Request, resp any) error {
 	// Parse response.
 	err = parseResponse(r, &resp)
 	if err != nil {
-		return fmt.Errorf("failed to parse response: %v", err)
+		return fmt.Errorf("failed to parse response: %w", err)
 	}
 
 	return nil
 }
 
+// Returns io.EOF, if the response was empty, but dst is not nil.
 func parseResponse(resp *http.Response, dst any) error {
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read response: %v", err)
+	} else if len(data) == 0 && dst != nil {
+		return io.EOF
 	}
 
 	err = json.Unmarshal(data, dst)

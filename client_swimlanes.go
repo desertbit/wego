@@ -7,12 +7,16 @@
 
 package wego
 
-import "context"
+import (
+	"context"
+	"errors"
+	"io"
+)
 
 // GetAllSwimlanes performs a get_all_swimlanes request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_all_swimlanes
 func (c *Client) GetAllSwimlanes(ctx context.Context, boardID string) (swimlanes []GetAllSwimlane, err error) {
-	var endpoint = "/api/boards/" + boardID + "/swimlanes"
+	endpoint := c.endpoint("boards", boardID, "swimlanes")
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -30,7 +34,7 @@ func (c *Client) GetAllSwimlanes(ctx context.Context, boardID string) (swimlanes
 // NewSwimlane performs a new_swimlane request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#new_swimlane
 func (c *Client) NewSwimlane(ctx context.Context, boardID, title string) (r NewSwimlaneResponse, err error) {
-	var endpoint = "/api/boards/" + boardID + "/swimlanes"
+	endpoint := c.endpoint("boards", boardID, "swimlanes")
 
 	req, err := c.newAuthenticatedPOSTRequest(ctx, endpoint, newSwimlaneRequest{Title: title})
 	if err != nil {
@@ -47,8 +51,10 @@ func (c *Client) NewSwimlane(ctx context.Context, boardID, title string) (r NewS
 
 // GetSwimlane performs a get_swimlane request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#get_swimlane
+//
+// Returns ErrNotFound, if the swimlane could not be found.
 func (c *Client) GetSwimlane(ctx context.Context, boardID, swimlaneID string) (swimlane GetSwimlane, err error) {
-	var endpoint = "/api/boards/" + boardID + "/swimlanes/" + swimlaneID
+	endpoint := c.endpoint("boards", boardID, "swimlanes", swimlaneID)
 
 	req, err := c.newAuthenticatedGETRequest(ctx, endpoint)
 	if err != nil {
@@ -57,6 +63,9 @@ func (c *Client) GetSwimlane(ctx context.Context, boardID, swimlaneID string) (s
 
 	err = c.doSimpleRequest(req, &swimlane)
 	if err != nil {
+		if errors.Is(err, io.EOF) {
+			err = ErrNotFound
+		}
 		return
 	}
 
@@ -66,7 +75,7 @@ func (c *Client) GetSwimlane(ctx context.Context, boardID, swimlaneID string) (s
 // DeleteSwimlane performs a delete_swimlane request against the Wekan server.
 // See https://wekan.github.io/api/v5.13/#delete_swimlane
 func (c *Client) DeleteSwimlane(ctx context.Context, boardID, swimlaneID string) (err error) {
-	var endpoint = "/api/boards/" + boardID + "/swimlanes/" + swimlaneID
+	endpoint := c.endpoint("boards", boardID, "swimlanes", swimlaneID)
 
 	req, err := c.newAuthenticatedDELETERequest(ctx, endpoint)
 	if err != nil {
