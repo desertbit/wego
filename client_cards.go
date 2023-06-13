@@ -9,7 +9,6 @@ package wego
 
 import (
 	"context"
-	"encoding/json"
 	"time"
 )
 
@@ -180,40 +179,50 @@ type NewCardResponse struct {
 }
 
 type GetCard struct {
-	Title            string          `json:"title"`
-	Archived         bool            `json:"archived"`
-	ArchivedAt       string          `json:"archivedAt"`
-	ParentID         string          `json:"parentId"`
-	ListID           string          `json:"listId"`
-	SwimlaneID       string          `json:"swimlaneId"`
-	BoardID          string          `json:"boardId"`
-	CoverID          string          `json:"coverId"`
-	Color            string          `json:"color"`
-	CreatedAt        string          `json:"createdAt"`
-	ModifiedAt       string          `json:"modifiedAt"`
-	CustomFields     json.RawMessage `json:"customFields"`
-	DateLastActivity string          `json:"dateLastActivity"`
-	Description      string          `json:"description"`
-	RequestedBy      string          `json:"requestedBy"`
-	AssignedBy       string          `json:"assignedBy"`
-	LabelIDs         []string        `json:"labelIds"`
-	Members          []string        `json:"members"`
-	Assignees        []string        `json:"assignees"`
-	ReceivedAt       string          `json:"receivedAt"`
-	StartAt          string          `json:"startAt"`
-	DueAt            string          `json:"dueAt"`
-	EndAt            string          `json:"endAt"`
-	SpentTime        int             `json:"spentTime"`
-	IsOvertime       bool            `json:"isOvertime"`
-	UserID           string          `json:"userId"`
-	Sort             int             `json:"sort"`
-	SubtaskSort      int             `json:"subtaskSort"`
-	Type             string          `json:"type"`
-	LinkedID         string          `json:"linkedId"`
-	Vote             CardVote        `json:"vote"`
+	Title            string            `json:"title"`
+	Archived         bool              `json:"archived"`
+	ArchivedAt       string            `json:"archivedAt"`
+	ParentID         string            `json:"parentId"`
+	ListID           string            `json:"listId"`
+	SwimlaneID       string            `json:"swimlaneId"`
+	BoardID          string            `json:"boardId"`
+	CoverID          string            `json:"coverId"`
+	Color            string            `json:"color"`
+	CreatedAt        string            `json:"createdAt"`
+	ModifiedAt       string            `json:"modifiedAt"`
+	CustomFields     []CardCustomField `json:"customFields"`
+	DateLastActivity string            `json:"dateLastActivity"`
+	Description      string            `json:"description"`
+	RequestedBy      string            `json:"requestedBy"`
+	AssignedBy       string            `json:"assignedBy"`
+	LabelIds         []string          `json:"labelIds"`
+	Members          []string          `json:"members"`
+	Assignees        []string          `json:"assignees"`
+	ReceivedAt       string            `json:"receivedAt"`
+	StartAt          string            `json:"startAt"`
+	DueAt            string            `json:"dueAt"`
+	EndAt            string            `json:"endAt"`
+	SpentTime        int               `json:"spentTime"`
+	IsOvertime       bool              `json:"isOvertime"`
+	UserID           string            `json:"userId"`
+	Sort             int               `json:"sort"`
+	SubtaskSort      int               `json:"subtaskSort"`
+	Type             string            `json:"type"`
+	LinkedID         string            `json:"linkedId"`
+	Vote             Vote              `json:"vote"`
+	Poker            Poker             `json:"poker"`
+	TargetIDGantt    []string          `json:"targetId_gantt"`
+	LinkTypeGantt    []int             `json:"linkType_gantt"`
+	LinkIDGantt      []string          `json:"linkId_gantt"`
+	CardNumber       int               `json:"cardNumber"`
 }
 
-type CardVote struct {
+type CardCustomField struct {
+	ID    string `json:"_id"`
+	Value any    `json:"value"`
+}
+
+type Vote struct {
 	Question             string   `json:"question"`
 	Positive             []string `json:"positive"`
 	Negative             []string `json:"negative"`
@@ -222,13 +231,31 @@ type CardVote struct {
 	AllowNonBoardMembers bool     `json:"allowNonBoardMembers"`
 }
 
+type Poker struct {
+	Question             bool     `json:"question"`
+	One                  []string `json:"one"`
+	Two                  []string `json:"two"`
+	Three                []string `json:"three"`
+	Five                 []string `json:"five"`
+	Eight                []string `json:"eight"`
+	Thirteen             []string `json:"thirteen"`
+	Twenty               []string `json:"twenty"`
+	Forty                []string `json:"forty"`
+	OneHundred           []string `json:"oneHundred"`
+	Unsure               []string `json:"unsure"`
+	End                  string   `json:"end"`
+	AllowNonBoardMembers bool     `json:"allowNonBoardMembers"`
+	Estimation           int      `json:"estimation"`
+}
+
 type EditCardOptions struct {
 	Title        string    `json:"title"`
 	Sort         string    `json:"sort"`
 	ParentID     string    `json:"parentId"`
 	Description  string    `json:"description"`
 	Color        string    `json:"color"`
-	Vote         CardVote  `json:"vote"`
+	Vote         Vote      `json:"vote"`
+	Poker        Poker     `json:"poker"`
 	LabelIDs     []string  `json:"labelIds"`
 	RequestedBy  string    `json:"requestedBy"`
 	AssignedBy   string    `json:"assignedBy"`

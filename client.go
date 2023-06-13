@@ -78,10 +78,10 @@ func NewClient(opts Options) (*Client, error) {
 		}
 	}
 	if opts.TimeBetweenLoginAttemps < time.Second {
-		opts.TimeBetweenLoginAttemps = time.Second
+		c.opts.TimeBetweenLoginAttemps = time.Second
 	}
 	if opts.Closer == nil {
-		opts.Closer = closer.New()
+		c.Closer = closer.New()
 	}
 
 	// Start routines.
