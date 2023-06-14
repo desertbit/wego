@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/desertbit/wego"
+	"github.com/im1lkyway/wego"
 )
 
 func main() {

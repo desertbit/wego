@@ -1,4 +1,4 @@
-module github.com/desertbit/wego
+module github.com/im1lkyway/wego
 
 go 1.20
 
