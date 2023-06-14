@@ -212,7 +212,7 @@ type GetCard struct {
 	SpentTime        int               `json:"spentTime"`
 	IsOvertime       bool              `json:"isOvertime"`
 	UserID           string            `json:"userId"`
-	Sort             int               `json:"sort"`
+	Sort             float64           `json:"sort"`
 	SubtaskSort      int               `json:"subtaskSort"`
 	Type             string            `json:"type"`
 	LinkedID         string            `json:"linkedId"`
