@@ -253,7 +253,7 @@ type GetBoard struct {
 	SpentTime                  int           `json:"spentTime"`
 	IsOvertime                 bool          `json:"isOvertime"`
 	Type                       string        `json:"type"`
-	Sort                       int           `json:"sort"`
+	Sort                       float32       `json:"sort"`
 }
 
 type BoardLabel struct {
